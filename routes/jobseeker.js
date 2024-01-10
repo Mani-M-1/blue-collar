@@ -1,37 +1,37 @@
 const express = require('express');
 const router = express.Router();
 
-const Jobs = require('../Models/Jobs');
+const User = require('../Models/User');
 
 // posting job 
-router.post('/postJob', async (req, res) => {
-    try {
-        const job =  new Jobs({
-            title: req.body.title,
-            companyName: req.body.companyName,
-            experience: req.body.experience,
-            skills: req.body.skills,
-            createdOn: new Date(req.body.createdOn),
-            postedBy: req.body.postedBy,
-        }) 
+router.put('/applyJob/:userId/:jobId', async (req, res) => {
+    const {userId, jobId} = req.params;
 
-        await job.save();
-        res.status(200).json({message: "Job posted successfully"});
+    try {
+        await User.updateOne({_id: userId}, {
+            $addToSet: {
+                jobsSeeked: jobId
+            }
+        })
+        res.status(200).json({message: "Job applied successfully"});
     }
     catch(err) {
-        res.status(500).json({err_msg: "Job didn't created due to API Error"});
+        res.status(500).json({err_msg: "API Error occured while applying for job"});
     }
 })
 
 // get all jobs of a job provider
-router.get('/jobsProvided/:userId', async (req, res) => {
+router.get('/jobsApplied/:userId', async (req, res) => {
     try {
-        const jobs = await Jobs.find({postedBy: req.params.userId});
+        const userDetails = await User.findOne({_id: req.params.userId});
 
-        res.status(200).json({message: "Jobs fetched successfully", jobs});
+        res.status(200).json({
+            message: "Jobs fetched successfully", 
+            jobsApplied: userDetails.jobsSeeked
+        });
     }
     catch(err) {
-        res.status(500).json({err_msg: "API Error occured while fetching the jobs"});
+        res.status(500).json({err_msg: "API Error occured while fetching the applied jobs"});
     }
 })
 
