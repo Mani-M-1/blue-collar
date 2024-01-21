@@ -35,4 +35,48 @@ router.get('/jobsProvided/:userId', async (req, res) => {
     }
 })
 
+// updating a particular job of a specific jobprovider 
+router.put('/updateJobDetails/:jobId', async (req, res) => {
+    try {
+        const {jobId} = req.params;
+
+        const updatedJob = await Jobs.updateOne(
+            {
+                _id: jobId
+            },
+            {
+                $set: req.body
+            },
+            {
+                new: true
+            }
+        )
+
+        res.status(200).json({
+            message: "Job updated successfully",
+            jobDetails: updatedJob
+        })
+    }
+    catch(err) {
+        res.status(500).json({err_msg: "API Error occured while updating the job details"});
+    }
+})
+
+
+// deleting specific job by id
+router.delete('/deleteJob/:jobId', async (req, res) => {
+    try {
+        const {jobId} = req.params;
+
+        await Jobs.deleteOne({_id: jobId});
+
+        res.status(200).json({
+            message: "Job deleted successfully"
+        })
+    }
+    catch(err) {
+        res.status(500).json({err_msg: "API Error occured while deleting the job"});
+    }
+})
+
 module.exports = router;

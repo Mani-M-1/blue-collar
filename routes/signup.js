@@ -23,7 +23,34 @@ router.post('/', async (req, res) => {
         }
     }
     catch(err) {
-        res.status(500).json({err_msg: 'user is unable to crete due to API error'})
+        res.status(500).json({err_msg: 'User is unable to crete due to API error'})
+    }
+})
+
+// adding role to user's data 
+router.put('/addRole/:userId', async (req, res) => {
+    const {userId} = req.params;
+
+    try {
+        await User.updateOne(
+            {
+                _id: userId
+            },
+            {
+                $set: {role: req.body.role}
+            },
+            {
+                new: true
+            }
+        )
+
+
+        res.status(200).json({
+            message: 'Role added successfully'
+        })
+    }
+    catch(err) {
+        res.status(500).json({err_msg: "API Error occured while adding role to user"});
     }
 })
 
