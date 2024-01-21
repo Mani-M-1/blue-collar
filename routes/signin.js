@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
         }
     }
     catch(err) {
-        res.status(500).json({err_msg: "couldn't login due to API Error"});
+        res.status(500).json({err_msg: "API Error occured while trying to login"});
     }
 })
 

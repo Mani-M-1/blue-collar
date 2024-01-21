@@ -2,21 +2,43 @@ const express = require('express');
 const router = express.Router();
 
 const Jobs = require('../Models/Jobs');
+const User = require('../Models/User');
+
+
 
 // posting job 
 router.post('/postJob', async (req, res) => {
     try {
-        const job =  new Jobs({
-            title: req.body.title,
-            companyName: req.body.companyName,
-            experience: req.body.experience,
-            skills: req.body.skills,
-            createdOn: new Date(req.body.createdOn),
-            postedBy: req.body.postedBy,
-        }) 
+        const userFromDb = await User.findOne({_id: req.body.postedBy});
+        console.log(userFromDb);
 
-        await job.save();
-        res.status(200).json({message: "Job posted successfully"});
+
+        if (!userFromDb) {
+            res.status(404).json({err_msg: "User doesn't exist"});
+        }
+        else {
+            if (userFromDb.role === "jobprovider") {
+                console.log(userFromDb.role);
+
+                const job =  new Jobs({
+                    jobTitle: req.body.jobTitle,
+                    companyName: req.body.companyName,
+                    description: req.body.description,
+                    location: req.body.companyName,
+                    workHours: req.body.workHours,
+                    salary: req.body.salary,
+                    contactDetails: req.body.contactDetails,
+                    postedOn: new Date(req.body.postedOn),
+                    postedBy: req.body.postedBy,
+                }) 
+        
+                await job.save();
+                res.status(200).json({message: "Job posted successfully"});
+            }
+            else {
+                res.status(404).json({err_msg: "User is not a Job Provider"});
+            }
+        }
     }
     catch(err) {
         res.status(500).json({err_msg: "Job didn't created due to API Error"});
@@ -28,7 +50,7 @@ router.get('/jobsProvided/:userId', async (req, res) => {
     try {
         const jobs = await Jobs.find({postedBy: req.params.userId});
 
-        res.status(200).json({message: "Jobs fetched successfully", jobs});
+        res.status(200).json({message: "Jobs fetched successfully", jobs, numberOfJobsPosted: jobs.length});
     }
     catch(err) {
         res.status(500).json({err_msg: "API Error occured while fetching the jobs"});
@@ -40,7 +62,7 @@ router.put('/updateJobDetails/:jobId', async (req, res) => {
     try {
         const {jobId} = req.params;
 
-        const updatedJob = await Jobs.updateOne(
+        await Jobs.updateOne(
             {
                 _id: jobId
             },
@@ -52,9 +74,11 @@ router.put('/updateJobDetails/:jobId', async (req, res) => {
             }
         )
 
+        const updatedJob = await Jobs.findOne({_id: jobId});
+
         res.status(200).json({
             message: "Job updated successfully",
-            jobDetails: updatedJob
+            updatedJobDetails: updatedJob
         })
     }
     catch(err) {
