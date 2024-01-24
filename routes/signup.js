@@ -52,9 +52,12 @@ router.put('/addRole/:userId', async (req, res) => {
                     new: true
                 }
             )
+
+            const user = await User.findOne({_id: userId});
     
             res.status(200).json({
-                message: 'Role added successfully'
+                message: 'Role added successfully',
+                role: user.role
             })
         }
     }

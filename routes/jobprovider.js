@@ -28,7 +28,7 @@ router.post('/postJob', async (req, res) => {
                     workHours: req.body.workHours,
                     salary: req.body.salary,
                     contactDetails: req.body.contactDetails,
-                    postedOn: new Date(req.body.postedOn),
+                    postedOn: new Date(),
                     postedBy: req.body.postedBy,
                 }) 
         

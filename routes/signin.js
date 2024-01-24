@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+// const jwt = require("jsonwebtoken");
+
 
 // importing required models
 const User = require('../Models/User');
@@ -15,12 +17,24 @@ router.post('/', async (req, res) => {
         }
         else {
             if (user.password === req.body.password) {
+
+                // const jwtToken = jwt.sign(
+                //     {
+                //         id: user._id
+                //     }, 
+                //     process.env.JWT_SEC,
+                //     {
+                //         expiresIn: "3d"
+                //     }
+                // )
+                
+
                 res.status(200).json({
                     message: 'User loggedin successfully',
                     userDetails: {
+                        userId: user._id,
                         email: user.email,
-                        role: user.role,
-                        jwtToken: "7ybwkhbhyeadcha"
+                        // jwtToken
                     } 
                 });
             }
