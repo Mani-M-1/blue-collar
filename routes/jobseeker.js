@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const User = require('../Models/User');
+const Jobs = require('../Models/Jobs');
+
 
 // applying for a specific job
 router.put('/applyJob/:userId/:jobId', async (req, res) => {
@@ -52,5 +54,18 @@ router.get('/jobsApplied/:userId', async (req, res) => {
         res.status(500).json({err_msg: "API Error occured while fetching the applied jobs"});
     }
 })
+
+// get all jobs present in the database 
+router.get('/allJobs', async (req, res) => {
+    try {
+        const jobs = await Jobs.find();
+    
+        res.status(200).json({message: "All Jobs fetched successfully", jobs, numberOfJobs: jobs.length});
+    }
+    catch(err) {
+        res.status(500).json({err_msg: "API Error occured while fetching the all jobs"});
+    }
+})
+
 
 module.exports = router;
