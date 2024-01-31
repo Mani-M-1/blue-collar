@@ -43,7 +43,13 @@ router.put('/undoJobApply/:userId/:jobId', async (req, res) => {
 // get jobs applied by a specific user
 router.get('/jobsApplied/:userId', async (req, res) => {
     try {
-        const userDetails = await User.findOne({_id: req.params.userId});
+        const userDetails = await User.findOne({_id: req.params.userId}).populate('jobsSeeked');
+
+        if (!userDetails) {
+            res.status(400).json({err_msg: "User not found"});
+        }
+
+
 
         res.status(200).json({
             message: "Jobs fetched successfully", 
@@ -60,7 +66,11 @@ router.get('/allJobs', async (req, res) => {
     try {
         const jobs = await Jobs.find();
     
-        res.status(200).json({message: "All Jobs fetched successfully", jobs, numberOfJobs: jobs.length});
+        res.status(200).json({
+            message: "All Jobs fetched successfully", 
+            jobs, 
+            numberOfJobs: jobs.length
+        });
     }
     catch(err) {
         res.status(500).json({err_msg: "API Error occured while fetching the all jobs"});

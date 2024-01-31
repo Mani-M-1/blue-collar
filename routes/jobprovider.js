@@ -10,7 +10,6 @@ const User = require('../Models/User');
 router.post('/postJob', async (req, res) => {
     try {
         const userFromDb = await User.findOne({_id: req.body.postedBy});
-        console.log(userFromDb);
 
 
         if (!userFromDb) {
@@ -18,7 +17,6 @@ router.post('/postJob', async (req, res) => {
         }
         else {
             if (userFromDb.role === "jobprovider") {
-                console.log(userFromDb.role);
 
                 const job =  new Jobs({
                     jobTitle: req.body.jobTitle,
@@ -28,6 +26,7 @@ router.post('/postJob', async (req, res) => {
                     workHours: req.body.workHours,
                     salary: req.body.salary,
                     contactDetails: req.body.contactDetails,
+                    jobImage: req.body.jobImage,
                     postedOn: new Date(),
                     postedBy: req.body.postedBy,
                 }) 

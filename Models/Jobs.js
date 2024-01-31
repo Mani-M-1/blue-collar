@@ -8,6 +8,7 @@ const jobsSchema = new mongoose.Schema({
     workHours: {type: String},
     salary: {type: String},
     contactDetails: {type: String},
+    jobImage: {type: String},
     // skills: [],
     postedOn: {type: Date},
     postedBy: {type: mongoose.Schema.ObjectId, ref: 'User'}
